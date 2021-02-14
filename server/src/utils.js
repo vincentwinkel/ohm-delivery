@@ -10,17 +10,55 @@ const db = (async () => {
 })();
 
 function getOhmById(id) {
-	return getOhmByField('id', id);
+	return getOhmByFields({
+		id
+	});
 }
 
-async function getOhmByField(field, value) {
-	const _db = await db;
-	const ohm = _db.get('ohms').find({
-		[field]: value
-	}).value();
+async function getOhmByFields(filters, _db) {
+	_db = _db || await db; //Avoiding duplicate nested calls
+	const ohm = _db.get('ohms').find(filters).value();
+	if (ohm) {
+		//Attach the next available statuses
+		const nextStatuses = await getNextStateByStatus(ohm.status);
+		const nextEditableStatuses = (nextStatuses || []).filter((status) => status.editable);
+		ohm.nextStatuses = nextEditableStatuses;
+	}
 	return ohm;
 }
 
+async function updateOhmStatus(filters, statusCode, comment) {
+	const _db = await db;
+	let ohm = await getOhmByFields(filters, _db);
+	//If OHM exists and new status can be set
+	const nextStatus = ohm.nextStatuses.find((status) => status.editable && status.code === statusCode);
+
+	if ((ohm) && (nextStatus)) {
+		//Common data to ohm and history
+		const data = {};
+		ohm.status = statusCode;
+		//Set optional comment
+		if (nextStatus.commentable) {
+			data.comment = comment;
+		}
+		//Inject updated data
+		ohm = {
+			...ohm,
+			data
+		};
+		//Add in history
+		ohm.history.push({
+			...data,
+			state: statusCode,
+			at: `${~~(Date.now() / 1000)}` //Cast like in db.config.js
+		});
+		_db.write();
+	}
+	//Update result
+	return getOhmByFields(filters, _db);
+}
+
+//The statuses are stored in db, then we can change their logic on the fly without restarting the server
 async function getStatusCodes() {
 	const _db = await db;
 	//Get all states / status
@@ -29,20 +67,20 @@ async function getStatusCodes() {
 	return states.reduce((arr, state) => arr.concat(state.map((status) => status.code)), []);
 }
 
-//The statuses are stored in db, then we can change their logic on the fly without restarting the server
-async function getNextStatus(code) {
+async function getNextStateByStatus(statusCode) {
 	const _db = await db;
 	//Get all states / status
 	const states = _db.get('states').value();
 	//Get the current status
-	const currentIndex = states.findIndex((state) => state.findIndex((status) => status.code === code) >= 0);
+	const currentIndex = states.findIndex((state) => state.findIndex((status) => status.code === statusCode) >= 0);
 	//If some next status exists, return them. Return an empty array otherwise
-	return (currentIndex >= states.length) ? [] : states[currentIndex + 1];
+	return (currentIndex >= states.length || currentIndex < 0) ? [] : states[currentIndex + 1];
 }
 
 module.exports = {
 	getOhmById,
-	getOhmByField,
+	getOhmByFields,
+	updateOhmStatus,
 	getStatusCodes,
-	getNextStatus
+	getNextStateByStatus
 };

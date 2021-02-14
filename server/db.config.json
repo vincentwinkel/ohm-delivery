@@ -13,9 +13,12 @@
 			"code": "IN_DELIVERY"
 		}],
 		[{
-			"code": "DELIVERED"
+			"code": "DELIVERED",
+			"editable": true
 		}, {
-			"code": "REFUSED"
+			"code": "REFUSED",
+			"editable": true,
+			"commentable": true
 		}]
 	],
 	"ohms": [{
@@ -63,7 +66,7 @@
 				"address": "1827 green street, Tree City"
 			},
 			"history": [{
-					"state": "CRAETED",
+					"state": "CREATED",
 					"at": "123456789"
 				},
 				{

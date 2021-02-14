@@ -16,21 +16,42 @@
 	</div>
 
 	<div ng-app="ohm-delivery">
-		<form ng-controller="tracking" ng-submit="sendData()">
-			<p>
-				<input id="tracking" type="text" ng-model="trackingId" placeholder="Enter your tracking id" required />
-			</p>
-			<p>
-				<button id="formBtn" type="submit">Submit</button>
-			</p>
-			<p>
-				<span ng-if="errorMessage">{{errorMessage}}</span>
-			</p>
+		<div ng-controller="tracking">
+			<form ng-submit="get()">
+				<p>
+					<input type="text" ng-model="trackingId" placeholder="Enter your tracking id" required />
+				</p>
+				<p>
+					<button type="submit">Submit</button>
+				</p>
+				<p>
+					<span ng-if="errorMessage" class="error">{{errorMessage}}</span>
+				</p>
+			</form>
+
 			<div ng-if="result" class="result">
-				<h3>#{{result.trackingId}}</h3>
-				<p><b>Status:</b> {{result.status}}</p>
+				<h3>#{{result.trackingId}} (Status: {{result.status}})</h3>
+				<b>History:</b>
+				<ul>
+					<li ng-repeat="record in result.history">
+						<div><b>Status:</b> {{record.state}}</div>
+						<div ng-if="record.comment"><b>Comment:</b> {{record.comment}}</div>
+						<div><b>Date:</b> {{record.at}}</div>
+					</li>
+				</ul>
+				<div ng-if="result.nextStatuses && result.nextStatuses.length">
+					<b>Update status:</b>
+					<ul>
+						<li ng-repeat="status in result.nextStatuses">
+							<form ng-submit="updateStatus(status.code)">
+								<input ng-if="status.commentable" type="text" ng-model="formData.comment[status.code]" placeholder="Enter comment (optional)" />
+								<button type="submit">{{status.code}}</button>
+							</form>
+						</li>
+					</ul>
+				</div>
 			</div>
-		</form>
+		</div>
 	</div>
 </body>
 
