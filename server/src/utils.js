@@ -21,7 +21,28 @@ async function getOhmByField(field, value) {
 	return ohm;
 }
 
+async function getStatusCodes() {
+	const _db = await db;
+	//Get all states / status
+	const states = _db.get('states').value();
+	//Flatten the 2d array returning only status codes
+	return states.reduce((arr, state) => arr.concat(state.map((status) => status.code)), []);
+}
+
+//The statuses are stored in db, then we can change their logic on the fly without restarting the server
+async function getNextStatus(code) {
+	const _db = await db;
+	//Get all states / status
+	const states = _db.get('states').value();
+	//Get the current status
+	const currentIndex = states.findIndex((state) => state.findIndex((status) => status.code === code) >= 0);
+	//If some next status exists, return them. Return an empty array otherwise
+	return (currentIndex >= states.length) ? [] : states[currentIndex + 1];
+}
+
 module.exports = {
 	getOhmById,
-	getOhmByField
+	getOhmByField,
+	getStatusCodes,
+	getNextStatus
 };

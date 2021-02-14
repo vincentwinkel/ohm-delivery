@@ -3,7 +3,7 @@ var express = require('express');
 var app = express();
 const bodyParser = require('body-parser')
 const Utils = require('./utils');
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
 function serve() {
 	app.get('/ohms/:trackingId', async (req, res) => {
