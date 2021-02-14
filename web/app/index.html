@@ -31,12 +31,18 @@
 
 			<div ng-if="result" class="result">
 				<h3>#{{result.trackingId}} (Status: {{result.status}})</h3>
+				<p ng-if="result.comment" class="comment">
+					<b>Comment:</b>{{result.comment}}
+				</p>
+				<p>
+					<b>Volts:</b>{{result.description.volts}}<br>
+					<b>Amperes:</b>{{result.description.amperes}}
+				</p>
 				<b>History:</b>
 				<ul>
 					<li ng-repeat="record in result.history">
 						<div><b>Status:</b> {{record.state}}</div>
-						<div ng-if="record.comment"><b>Comment:</b> {{record.comment}}</div>
-						<div><b>Date:</b> {{record.at}}</div>
+						<div><b>Date:</b> {{record.at * 1000 | date}}</div>
 					</li>
 				</ul>
 				<div ng-if="result.nextStatuses && result.nextStatuses.length">

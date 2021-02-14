@@ -11,8 +11,10 @@ angular
 				$http.get(`/ohms/${this.trackingId}`)
 					.then((result) => {
 						$scope.result = result.data;
+						$scope.formData = {};
 						$scope.errorMessage = '';
 					}, (error) => {
+						$scope.result = null;
 						$scope.errorMessage = NOT_FOUND(error.status, this.trackingId);
 					});
 			} else {
@@ -29,6 +31,7 @@ angular
 					$scope.result = result.data;
 					$scope.errorMessage = '';
 				}, (error) => {
+					$scope.result = null;
 					$scope.errorMessage = NOT_FOUND(error.status, $scope.trackingId);
 				});
 			}

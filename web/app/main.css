@@ -53,4 +53,8 @@ p {
 
 .result p {
 	text-align: left;
+	margin-bottom: 20px;
+}
+li {
+	margin-bottom: 20px;
 }

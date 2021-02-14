@@ -34,21 +34,14 @@ async function updateOhmStatus(filters, statusCode, comment) {
 	const nextStatus = ohm.nextStatuses.find((status) => status.editable && status.code === statusCode);
 
 	if ((ohm) && (nextStatus)) {
-		//Common data to ohm and history
-		const data = {};
 		ohm.status = statusCode;
 		//Set optional comment
 		if (nextStatus.commentable) {
-			data.comment = comment;
+			ohm.comment = comment;
 		}
-		//Inject updated data
-		ohm = {
-			...ohm,
-			data
-		};
+		delete ohm.nextStatuses;
 		//Add in history
 		ohm.history.push({
-			...data,
 			state: statusCode,
 			at: `${~~(Date.now() / 1000)}` //Cast like in db.config.js
 		});
