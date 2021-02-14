@@ -26,11 +26,27 @@ h2 {
 
 input {
 	margin: 2em auto 1em;
-	width: 50%;
+	width: 100%;
 }
 
 p {
 	text-align: center;
 	margin: auto;
 	line-height: 2.0;
+}
+
+[ng-app='ohm-delivery'] {
+	width: 80%;
+	max-width: 800px;
+	margin: 0 auto;
+	padding: 20px;
+}
+
+.result {
+	border: 1px solid dodgerblue;
+	padding: 10px;
+}
+
+.result p {
+	text-align: left;
 }

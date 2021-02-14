@@ -9,14 +9,19 @@ const db = (async () => {
 	return _db;
 })();
 
-async function getOhmById(id) {
+function getOhmById(id) {
+	return getOhmByField('id', id);
+}
+
+async function getOhmByField(field, value) {
 	const _db = await db;
 	const ohm = _db.get('ohms').find({
-		id
+		[field]: value
 	}).value();
 	return ohm;
 }
 
 module.exports = {
-	getOhmById
+	getOhmById,
+	getOhmByField
 };
