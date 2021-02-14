@@ -6,12 +6,12 @@ const Utils = require('./utils');
 app.use(bodyParser.json())
 
 function serve() {
-    app.get('/ohms/:id', async (req, res) => {
-        const ohm = await Utils.getOhmById(req.params.id);
-        res.send(ohm);
-    })
+	app.get('/ohms/:id', async (req, res) => {
+		const ohm = await Utils.getOhmById(req.params.id);
+		res.send(ohm);
+	});
 
-    app.listen(3000, () => console.log('listening on port 3000'));
+	app.listen(3000, () => console.log('listening on port 3000'));
 }
 
 serve();
